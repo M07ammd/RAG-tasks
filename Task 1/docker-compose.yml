@@ -1,0 +1,24 @@
+﻿version: "3.9"
+
+services:
+  notebook:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: day1_rag_notebook
+    ports:
+      - "8888:8888"
+    volumes:
+      # Mount the whole project so edits on host reflect instantly
+      - .:/app
+      # Persist the ChromaDB vector index between runs
+      - chroma_data:/app/chroma_db
+      # Cache the FastEmbed model so it is only downloaded once
+      - fastembed_cache:/root/.cache/fastembed
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+
+volumes:
+  chroma_data:
+  fastembed_cache:

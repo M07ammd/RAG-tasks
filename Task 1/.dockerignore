@@ -1,0 +1,29 @@
+﻿# Version control
+.git
+.gitignore
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# ChromaDB (rebuilt inside container via volume)
+chroma_db/
+
+# Environment files
+.env
+*.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
