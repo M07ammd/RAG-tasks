@@ -1,4 +1,4 @@
-﻿import hashlib
+import hashlib
 from pathlib import Path
 from typing import List
 
@@ -73,8 +73,8 @@ def chunk_documents(
 
 # Embedding 
 
-def get_embedding_function(model_name: str = config.EMBEDDING_MODEL):
-    return FastEmbedEmbeddings(model_name=model_name)
+def get_embedding_function(model_name: str = config.EMBEDDING_MODEL, batch_size: int = 32):
+    return FastEmbedEmbeddings(model_name=model_name, batch_size=batch_size)
 
 
 #  Build the Chroma vector index
@@ -85,12 +85,22 @@ def build_index(
     persist_directory: str = str(config.CHROMA_DIR),
     collection_name: str = config.COLLECTION_NAME,
 ) -> Chroma:
+    from chromadb import PersistentClient
+    try:
+        client = PersistentClient(path=persist_directory)
+        client.delete_collection(collection_name)
+    except Exception:
+        pass
 
     embed_fn = get_embedding_function()
+    
+    # Extract stable IDs from chunk metadata
+    ids = [chunk.metadata["chunk_id"] for chunk in chunks]
 
     vectordb = Chroma.from_documents(
         documents=chunks,
         embedding=embed_fn,
+        ids=ids,
         persist_directory=persist_directory,
         collection_name=collection_name,
     )
